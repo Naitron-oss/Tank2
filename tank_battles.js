@@ -1,12 +1,5 @@
-var tank1;
-var bullets1 = [];
-var poly1 = [];
-
-var tank2;
-var bullets2 = [];
-var poly2 = [];
-
-var walls = [];
+var tank1, tank2;
+var walls = [], bullets1 = [], bullets2= [];
 var gameend = false;
 
 function setup() {
@@ -21,15 +14,14 @@ function setup() {
   angleMode(DEGREES);
 }
 
+var bgcolor = 0;
 function draw() {
-  background(0);
-  tank1.update();
-  tank1.show();
-  poly1 = tank1.collisionbox();
+  background(bgcolor);
   
-  tank2.update();
-  tank2.show();
-  poly2 = tank2.collisionbox();
+  tank1.render();
+  tank2.render();
+  tank1.collisionBox();
+  tank2.collisionBox();
   
   if (keyIsDown(UP_ARROW)) {
     tank1.setBoost(0.2);
@@ -52,28 +44,34 @@ function draw() {
     tank2.setRotation(10);
   }
   
+  bullets2 = [];
   for (var i = 0; i < bullets1.length; i++) {
     bullets1[i].render();
     bullets1[i].update();
     
-    if(frameCount - bullets1[i].startFrame <= bullets1[i].lifeSpan){
+    if(bullets1[i].alive()){
       bullets2.push(bullets1[i]);
     }
-    for (var j = 0; j < walls.length; j++) {
-      collide(bullets1[i], walls[j]);    
-    }
     
-    if (collidePointPoly(bullets1[i].pos.x, bullets1[i].pos.y,poly1))
-      gameend = true;
-    if (collidePointPoly(bullets1[i].pos.x, bullets1[i].pos.y,poly2))
-      gameend = true;
-  
+    for (var j = 0; j < walls.length; j++) {
+      collideBW(bullets1[i], walls[j]);    
+    }    
+    collideBT(bullets1[i], tank1);
+    collideBT(bullets1[i], tank2);   
   }
   bullets1 = bullets2.slice();
-  bullets2 = [];
+  
+  bgcolor = 0;
   for (var i = 0; i < walls.length; i++) {
+    collideTW(tank1, walls[i]);
+    collideTW(tank2, walls[i]);
     walls[i].render();
   }
+  
+  collideTT(tank1, tank2);
+
+  tank1.update();
+  tank2.update();
   
   if (gameend == true) {
       fill(255);
@@ -82,7 +80,7 @@ function draw() {
   }
 }
 
-function collide(bullet, wall){
+function collideBW(bullet, wall){
   delta = 5;
   if(collidePointRect(bullet.pos.x, bullet.pos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b)) {
     if(bullet.pos.x >= wall.pos.x - wall.a + delta && bullet.pos.x <= wall.pos.x + wall.a - delta){
@@ -94,6 +92,41 @@ function collide(bullet, wall){
   }
 }
 
+function collideBT(bullet, tank){
+  if(collidePointPoly(bullet.pos.x, bullet.pos.y, tank.hitbox)){
+    gameend = true;
+  }
+}
+
+
+function collideTW(tank, wall){
+  if(collideRectPoly(wall.pos.x-wall.a, wall.pos.y-wall.b, 2*wall.a, 2*wall.b, tank.hitbox)){
+    tank.pos = tank.prevPos.copy();
+    tank.heading = tank.prevHeading;
+    tank.thrust = 0;
+    tank.vel.mult(0);
+    tank.rotation = 0;
+    // bgcolor = 50;
+  }
+}
+
+
+function collideTT(tank1, tank2){
+  if(collidePolyPoly(tank1.hitbox, tank2.hitbox)){
+    tank1.pos = tank1.prevPos.copy();
+    tank1.heading = tank1.prevHeading;
+    tank1.thrust = 0;
+    tank1.vel.mult(0);
+    tank1.rotation = 0;
+
+    tank2.pos = tank2.prevPos.copy();
+    tank2.heading = tank2.prevHeading;
+    tank2.thrust = 0;
+    tank2.vel.mult(0);
+    tank2.rotation = 0;
+    // bgcolor = 50;
+  }
+}
 
 function keyReleased() {
   tank1.setRotation(0); 

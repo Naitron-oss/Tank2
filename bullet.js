@@ -17,4 +17,8 @@ function Bullet(tpos, angle, colour) {
     point(this.pos.x, this.pos.y);
     pop();
   }
+
+  this.alive = function() {
+    return frameCount - this.startFrame <= this.lifeSpan
+  }
 }

@@ -8,10 +8,10 @@ Features:
 * Bullet shooting and Timeout
 * Bullet Reflection on walls
 * Game Over Detection
-
-To-Do:
 * Tank-Wall Collisions
 * Tank-Tank Collisions
+
+To-Do:
 * Death animation
 * Score Board
 * Sound Effects
