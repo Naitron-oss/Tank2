@@ -20,13 +20,12 @@ function Tank(x, y, h, colour) {
   }
   
   this.setBoost = function(b) {
-    this.thrust = b;
+    this.thrust = p5.Vector.fromAngle(radians(this.heading));
+    this.thrust.mult(b);
   }
   
   this.boost = function() {
-    var force = p5.Vector.fromAngle(radians(this.heading));
-    force.mult(this.thrust);
-    this.vel.add(force);
+    this.vel.add(this.thrust);
   }
   
   this.setRotation = function(angle) {

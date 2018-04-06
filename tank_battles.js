@@ -68,7 +68,7 @@ function draw() {
     walls[i].render();
   }
   
-  collideTT(tank1, tank2);
+  // collideTT(tank1, tank2);
 
   tank1.update();
   tank2.update();
@@ -81,7 +81,7 @@ function draw() {
 }
 
 function collideBW(bullet, wall){
-  delta = 5;
+  var delta = 5;
   if(collidePointRect(bullet.pos.x, bullet.pos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b)) {
     if(bullet.pos.x >= wall.pos.x - wall.a + delta && bullet.pos.x <= wall.pos.x + wall.a - delta){
       bullet.vel.y *= -1;
@@ -100,13 +100,24 @@ function collideBT(bullet, tank){
 
 
 function collideTW(tank, wall){
+  var delta = -5;
+  var delta2 = 0.5;
+  var dir = 0;
   if(collideRectPoly(wall.pos.x-wall.a, wall.pos.y-wall.b, 2*wall.a, 2*wall.b, tank.hitbox)){
     tank.pos = tank.prevPos.copy();
     tank.heading = tank.prevHeading;
-    tank.thrust = 0;
-    tank.vel.mult(0);
-    tank.rotation = 0;
-    // bgcolor = 50;
+    if (tank.pos.x >= wall.pos.x - wall.a + delta && tank.pos.x <= wall.pos.x + wall.a - delta) {
+      tank.thrust.y *= 0;
+      tank.vel.y *= 0;
+      dir = wall.pos.y - tank.pos.y > 0 ? 1 : -1;
+      tank.pos.y -= dir * delta2;
+    }
+    if (tank.pos.y >= wall.pos.y - wall.b + delta && tank.pos.y <= wall.pos.y + wall.b - delta) {
+      tank.thrust.x *= 0;
+      tank.vel.x *= 0;
+      dir = wall.pos.x - tank.pos.x > 0 ? 1 : -1;
+      tank.pos.x -= dir * delta2;
+    }
   }
 }
 
