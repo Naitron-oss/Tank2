@@ -11,7 +11,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   tank1 = new Tank(40, 40, 0, 'green', 1);                 
   tank2 = new Tank(width - 40, height - 40, 180,  'red', 2);                
-  walls = map1().slice()
+  walls = randmap().slice()
   rectMode(CENTER);
   angleMode(DEGREES);
   // fr = createP('');
