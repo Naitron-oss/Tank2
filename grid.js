@@ -30,7 +30,9 @@ function map2() {
     
     for (var i = 0; i < width + 20; i += 250) {
         for (var j = 0; j < height + 20; j += 250) {
-            if(random() < 0.2)
+            if (random() < 0.1)
+                ;
+            else if (random() < 0.2)
                 map.push(new Wall(i, j, 10, 10, -1.5, 'blue'));
             else if (random() < 0.5)
                 map.push(new Wall(i, j, 20, 90));
