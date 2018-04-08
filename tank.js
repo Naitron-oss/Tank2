@@ -18,8 +18,8 @@ function Tank(x, y, h, colour, id = 0) {
     this.boost();
     this.rotate();
     this.pos.add(this.vel);
-    constrain(this.pos.x, 0, width);
-    constrain(this.pos.x, 0, height);
+    constrain(this.pos.x, 10, width-10);
+    constrain(this.pos.x, 10, height-10);
     this.vel.mult(this.dampening);
   }
   
@@ -61,16 +61,18 @@ function Tank(x, y, h, colour, id = 0) {
     var a = 30, b = 20;
     var c = cos(this.heading), s = sin(this.heading);
     var poly = [];
-    poly[0] = this.createRotatedVector( a, b);
-    poly[1] = this.createRotatedVector( a,-b);
-    poly[2] = this.createRotatedVector(-a,-b);
-    poly[3] = this.createRotatedVector(-a, b);
+    poly[0] = this.createRotatedVector( a,-b); // body
+    poly[1] = this.createRotatedVector(-a,-b);
+    poly[2] = this.createRotatedVector(-a, b);
+    poly[3] = this.createRotatedVector(a, b);
+    poly[4] = this.createRotatedVector(a, 5); // cannon
+    poly[5] = this.createRotatedVector(50, 5);
+    poly[6] = this.createRotatedVector(50, -5);
+    poly[7] = this.createRotatedVector(a, -5);
     // beginShape();
-    // fill(150,150,150,50);
-    // vertex(poly[0].x, poly[0].y);
-    // vertex(poly[1].x, poly[1].y);
-    // vertex(poly[2].x, poly[2].y);
-    // vertex(poly[3].x, poly[3].y);
+    // fill(150,150,150,150);
+    // for(var i = 0; i < poly.length; i++)
+    //   vertex(poly[i].x, poly[i].y);
     // endShape(CLOSE);
     this.hitbox = poly.slice();
   }
