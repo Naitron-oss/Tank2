@@ -109,22 +109,23 @@ function collideBT(bullet, tank){
 }
 
 
-function collideTW(tank, wall){
-  var delta = -5;
+function collideTW(tank, wall) {
+  var delta = -10;
   var delta2 = 0.5;
+  var e = 0.1;
   var dir = 0;
-  if(collideRectPoly(wall.pos.x-wall.a, wall.pos.y-wall.b, 2*wall.a, 2*wall.b, tank.hitbox)){
+  if (collideRectPoly(wall.pos.x - wall.a, wall.pos.y - wall.b, 2 * wall.a, 2 * wall.b, tank.hitbox)) {
     tank.pos = tank.prevPos.copy();
     tank.heading = tank.prevHeading;
     if (tank.pos.x >= wall.pos.x - wall.a + delta && tank.pos.x <= wall.pos.x + wall.a - delta) {
       tank.thrust.y *= 0;
-      tank.vel.y *= 0;
+      tank.vel.y *= -e;
       dir = wall.pos.y - tank.pos.y > 0 ? 1 : -1;
       tank.pos.y -= dir * delta2;
     }
     if (tank.pos.y >= wall.pos.y - wall.b + delta && tank.pos.y <= wall.pos.y + wall.b - delta) {
       tank.thrust.x *= 0;
-      tank.vel.x *= 0;
+      tank.vel.x *= e;
       dir = wall.pos.x - tank.pos.x > 0 ? 1 : -1;
       tank.pos.x -= dir * delta2;
     }
