@@ -18,12 +18,14 @@ function Tank(x, y, h, colour, id = 0) {
     this.boost();
     this.rotate();
     this.pos.add(this.vel);
+    constrain(this.pos.x, 0, width);
+    constrain(this.pos.x, 0, height);
     this.vel.mult(this.dampening);
   }
   
   this.setBoost = function(b) {
     this.thrust = p5.Vector.fromAngle(radians(this.heading));
-    this.thrust.mult(b/10.0);
+    this.thrust.mult(b/5.0);
   }
   
   this.boost = function() {
@@ -43,9 +45,9 @@ function Tank(x, y, h, colour, id = 0) {
     translate(this.pos.x, this.pos.y);
     rotate(this.heading);
     fill(this.colour);
-    rect(0, 0, 30, 20);
-    rect(0, 0, 10, 10);
-    rect(0 + 12.5, 0, 25, 4);
+    rect(0, 0, 60, 40);
+    rect(0, 0, 20, 20);
+    rect(25, 0, 50, 8);
     pop();
   }
 
@@ -56,7 +58,7 @@ function Tank(x, y, h, colour, id = 0) {
   }  
 
   this.collisionBox = function() {
-    var a = 15, b = 10;
+    var a = 30, b = 20;
     var c = cos(this.heading), s = sin(this.heading);
     var poly = [];
     poly[0] = this.createRotatedVector( a, b);

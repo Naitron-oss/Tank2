@@ -5,10 +5,10 @@ var loser;
 var bgcolor = 0;
 
 var fw = 1.5, bw = 1.2, lr = 5;
-var maxbullets = 8;
+var maxbullets = 5;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(50*(windowWidth/50), 50*(windowHeight/50));
   tank1 = new Tank(40, 40, 0, 'green', 1);                 
   tank2 = new Tank(width - 40, height - 40, 180,  'red', 2);                
   walls = randmap().slice()
@@ -89,7 +89,7 @@ function draw() {
 }
 
 function collideBW(bullet, wall){
-  var delta = 5;
+  var delta = bullet.vel.mag();
   if(collidePointRect(bullet.pos.x, bullet.pos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b)) {
     if(bullet.pos.x >= wall.pos.x - wall.a + delta && bullet.pos.x <= wall.pos.x + wall.a - delta){
       bullet.vel.y *= -1;
@@ -110,24 +110,24 @@ function collideBT(bullet, tank){
 
 
 function collideTW(tank, wall) {
-  var delta = -10;
-  var delta2 = 0.5;
-  var e = 0.1;
+  var delta = -5;
+  var delta_push = 1;
+  // var e = -0.5;
   var dir = 0;
   if (collideRectPoly(wall.pos.x - wall.a, wall.pos.y - wall.b, 2 * wall.a, 2 * wall.b, tank.hitbox)) {
-    tank.pos = tank.prevPos.copy();
+    // tank.pos = tank.prevPos.copy();
     tank.heading = tank.prevHeading;
     if (tank.pos.x >= wall.pos.x - wall.a + delta && tank.pos.x <= wall.pos.x + wall.a - delta) {
       tank.thrust.y *= 0;
-      tank.vel.y *= -e;
+      tank.vel.y *= -wall.e;
       dir = wall.pos.y - tank.pos.y > 0 ? 1 : -1;
-      tank.pos.y -= dir * delta2;
+      tank.pos.y -= dir * delta_push;
     }
     if (tank.pos.y >= wall.pos.y - wall.b + delta && tank.pos.y <= wall.pos.y + wall.b - delta) {
       tank.thrust.x *= 0;
-      tank.vel.x *= e;
+      tank.vel.x *= -wall.e;
       dir = wall.pos.x - tank.pos.x > 0 ? 1 : -1;
-      tank.pos.x -= dir * delta2;
+      tank.pos.x -= dir * delta_push;
     }
   }
 }
@@ -158,7 +158,7 @@ function keyReleased() {
 }
 
 function keyPressed() {
-  if (key == ' ' && tank1.ctr < maxbullets){
+  if (key == 'M' && tank1.ctr < maxbullets){
     tank1.ctr++;
     bullets1.push(new Bullet(tank1.pos, tank1.heading, tank1.colour, 1));
   }

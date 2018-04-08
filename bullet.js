@@ -2,10 +2,10 @@ function Bullet(tpos, angle, colour, id) {
   this.id = id;
   this.startFrame = frameCount;
   this.lifeSpan = 5*60;
-  this.pos = createVector(tpos.x + 25*cos(angle), tpos.y + 25*sin(angle));
+  this.pos = createVector(tpos.x + 50*cos(angle), tpos.y + 50*sin(angle));
   this.vel = p5.Vector.fromAngle(radians(angle));
   this.colour = colour;
-  this.vel.mult(7);
+  this.vel.mult(12);
   
   this.update = function() {
     this.pos.add(this.vel);
@@ -14,7 +14,7 @@ function Bullet(tpos, angle, colour, id) {
   this.render = function() {
     push();
     stroke(this.colour);
-    strokeWeight(7);
+    strokeWeight(12);
     point(this.pos.x, this.pos.y);
     pop();
   }
