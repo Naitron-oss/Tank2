@@ -1,47 +1,50 @@
 var tank1, tank2;
 var walls = [], bullets1 = [], bullets2= [];
 var gameend = false;
+var loser;
+var bgcolor = 0;
+
+var fw = 1.5, bw = 1.2, lr = 5;
+var maxbullets = 8;
 
 function setup() {
-  createCanvas(600,600);
-  tank1 = new Tank(40, 40, 0, 'green');                 
-  tank2 = new Tank(500, 500, 180, 'red');                
-  
-  for (var i = 0; i < 4; i++) {                   
-    walls.push(new Wall(i));
-  }
+  createCanvas(windowWidth, windowHeight);
+  tank1 = new Tank(40, 40, 0, 'green', 1);                 
+  tank2 = new Tank(width - 40, height - 40, 180,  'red', 2);                
+  walls = map1().slice()
   rectMode(CENTER);
   angleMode(DEGREES);
+  // fr = createP('');
 }
 
-var bgcolor = 0;
 function draw() {
-  background(bgcolor);
-  
+  // fr.html(floor(frameRate()));
+  background(bgcolor);  
   tank1.render();
   tank2.render();
   tank1.collisionBox();
   tank2.collisionBox();
   
+  
   if (keyIsDown(UP_ARROW)) {
-    tank1.setBoost(0.2);
+    tank1.setBoost(fw);
   } else if (keyIsDown(DOWN_ARROW)) {
-    tank1.setBoost(-0.15);
+    tank1.setBoost(-bw);
   } 
   if (keyIsDown(LEFT_ARROW)) {
-    tank1.setRotation(-10);
+    tank1.setRotation(-lr);
   } else if (keyIsDown(RIGHT_ARROW)) {
-    tank1.setRotation(10);
+    tank1.setRotation(lr);
   } 
   if (keyIsDown(87)) {
-    tank2.setBoost(0.2);
+    tank2.setBoost(fw);
   } else if (keyIsDown(83)) {
-    tank2.setBoost(-0.15);
+    tank2.setBoost(-bw);
   }  
   if (keyIsDown(65)) {
-    tank2.setRotation(-10);
+    tank2.setRotation(-lr);
   } else if (keyIsDown(68)) {
-    tank2.setRotation(10);
+    tank2.setRotation(lr);
   }
   
   bullets2 = [];
@@ -52,6 +55,10 @@ function draw() {
     if(bullets1[i].alive()){
       bullets2.push(bullets1[i]);
     }
+    else if(bullets1[i].id == 1)
+      tank1.ctr--;
+    else
+      tank2.ctr--;
     
     for (var j = 0; j < walls.length; j++) {
       collideBW(bullets1[i], walls[j]);    
@@ -74,9 +81,10 @@ function draw() {
   tank2.update();
   
   if (gameend == true) {
-      fill(255);
-      textSize(60);
-      text('GAME OVER', 100, 300);
+    fill(loser == 2 ? 'GREEN' : 'RED');
+    textAlign(CENTER);
+    textSize(60);
+    text('WINNER ' + (loser == 2 ? 'GREEN' : 'RED'), windowWidth / 2, windowHeight / 2);
   }
 }
 
@@ -94,7 +102,9 @@ function collideBW(bullet, wall){
 
 function collideBT(bullet, tank){
   if(collidePointPoly(bullet.pos.x, bullet.pos.y, tank.hitbox)){
-    gameend = true;
+    if(!gameend) 
+      loser = tank.id;
+    gameend = true;    
   }
 }
 
@@ -147,10 +157,12 @@ function keyReleased() {
 }
 
 function keyPressed() {
-  if (key == ' '){
-    bullets1.push(new Bullet(tank1.pos, tank1.heading, tank1.colour));
+  if (key == ' ' && tank1.ctr < maxbullets){
+    tank1.ctr++;
+    bullets1.push(new Bullet(tank1.pos, tank1.heading, tank1.colour, 1));
   }
-  if (key == 'G')     {
-    bullets1.push(new Bullet(tank2.pos, tank2.heading, tank2.colour)); 
+  if (key == 'G' && tank2.ctr < maxbullets){
+    tank2.ctr++;
+    bullets1.push(new Bullet(tank2.pos, tank2.heading, tank2.colour, 2)); 
   }
 }

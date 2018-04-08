@@ -1,9 +1,11 @@
-function Tank(x, y, h, colour) {
+function Tank(x, y, h, colour, id = 0) {
+  this.id = id;
+  this.ctr = 0;
   this.pos = createVector(x, y);
   this.prevPos = this.pos.copy()
   this.heading = h;
   this.prevHeading = this.heading;
-  this.dampening = 0.95;
+  this.dampening = 0.97;
   this.rotation = 0;
   this.colour = colour;
   this.vel = createVector(0,0);
@@ -21,7 +23,7 @@ function Tank(x, y, h, colour) {
   
   this.setBoost = function(b) {
     this.thrust = p5.Vector.fromAngle(radians(this.heading));
-    this.thrust.mult(b);
+    this.thrust.mult(b/10.0);
   }
   
   this.boost = function() {

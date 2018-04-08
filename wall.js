@@ -1,7 +1,7 @@
-function Wall(i) {
-  this.pos = createVector(120*i + 120,abs((i%2)*height - 500));
-  this.a = 10;
-  this.b = 100;
+function Wall(x, y, a, b) {
+  this.pos = createVector(x, y);
+  this.a = a;
+  this.b = b;
   
   this.render = function() {
     push();
