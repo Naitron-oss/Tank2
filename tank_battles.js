@@ -75,19 +75,11 @@ function draw() {
     else
     tank2.ctr--;
     
-   //USE IN CASE OF HIGH BULLET VELOCITY  
-   /*  for (var j = 0; j < walls.length; j++) {
-      collideBT(bullets1[i], tank1);
-      collideBT(bullets1[i], tank2);   
-      if(collideBW(bullets1[i], walls[j]))
-        j=0;    //for successive collisions
-    }     */
-    
-    //GOOD ENOUGH FOR SLOW BULLET VELOCITY
-    for (var j = 0; j < walls.length; j++)
-      collideBW(bullets1[i], walls[j]);       
     collideBT(bullets1[i], tank1);
     collideBT(bullets1[i], tank2);
+    //GOOD ENOUGH FOR SLOW BULLET VELOCITY
+    for (var j = 0; j < walls.length; j++)
+      if(collideBW(bullets1[i], walls[j])) j = -1;  //Multiple collisions per bullet
   }
   bullets1 = bullets2.slice();
   
@@ -98,7 +90,8 @@ function draw() {
     walls[walls.length-1-i].render();
   }
   
-  // collideTT(tank1, tank2);  
+  collideTT(tank1, tank2);  
+  collideTT(tank2, tank1);  
 
   tank1.update();
   tank2.update();
@@ -125,6 +118,8 @@ function draw() {
 
 function collideBW(bullet, wall){
   var hit = collideLineRect(bullet.pos.x, bullet.pos.y, bullet.prevPos.x, bullet.prevPos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b, true);
+  if(wall.a <= 10 || wall.b <= 10)
+    return false;  
   if(hit.top.x && hit.top.y && bullet.prevPos.y < bullet.pos.y) {
     bullet.pos.y = bullet.pos.y += 2 * (hit.top.y - bullet.pos.y);
     bullet.vel.y *= -1;
@@ -145,8 +140,10 @@ function collideBW(bullet, wall){
     bullet.vel.x *= -1;
     bullet.prevPos.x = hit.right.x;
     bullet.prevPos.y = hit.right.y;
-  } else if (bullet.pos.x >= wall.pos.x - wall.a && bullet.pos.x <= wall.pos.x + wall.a && bullet.pos.y >= wall.pos.y - wall.b && bullet.pos.y <= wall.pos.y + wall.b){
+  } else if (bullet.pos.x >= wall.pos.x - wall.a && bullet.pos.x <= wall.pos.x + wall.a 
+          && bullet.pos.y >= wall.pos.y - wall.b && bullet.pos.y <= wall.pos.y + wall.b){
     bullet.vel.mult(0);
+    bullet.lifeSpan = 0;
     return false;
   } else
     return false;
@@ -173,15 +170,15 @@ function collideBT(bullet, tank){
 
 
 function collideTW(tank, wall) {
-  var delta = -5;
+  var delta = -25;
   var delta_push = 1;
   var dir = 0;
   if (collideRectPoly(wall.pos.x - wall.a, wall.pos.y - wall.b, 2 * wall.a, 2 * wall.b, tank.hitbox)) {
     tank.heading = tank.prevHeading;
     if (tank.pos.x >= wall.pos.x - wall.a + delta && tank.pos.x <= wall.pos.x + wall.a - delta) {
+      dir = wall.pos.y - tank.pos.y > 0 ? 1 : -1;
       tank.thrust.y *= 0;
       tank.vel.y *= -wall.e;
-      dir = wall.pos.y - tank.pos.y > 0 ? 1 : -1;
       tank.pos.y -= dir * delta_push;
     }
     if (tank.pos.y >= wall.pos.y - wall.b + delta && tank.pos.y <= wall.pos.y + wall.b - delta) {
@@ -192,6 +189,15 @@ function collideTW(tank, wall) {
     }
   }
 }
+
+function collideTT(tank1, tank2) {
+  if(collidePolyPoly(tank1.hitbox, tank2.hitbox)){
+    var dir = p5.Vector.sub(tank2.pos, tank1.pos);
+    dir.setMag(tank1.vel.mag());
+    tank2.vel.add(dir);
+  }  
+}
+
 
 function keyReleased() {
   tank1.setRotation(0); 
