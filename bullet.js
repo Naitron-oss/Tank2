@@ -2,12 +2,14 @@ function Bullet(tpos, angle, colour, id) {
   this.id = id;
   this.startFrame = frameCount;
   this.lifeSpan = 5*60;
-  this.pos = createVector(tpos.x + 50*cos(angle), tpos.y + 50*sin(angle));
+  this.pos = createVector(tpos.x + 52*cos(angle), tpos.y + 52*sin(angle));
+  this.prevPos = this.pos.copy();
   this.vel = p5.Vector.fromAngle(radians(angle));
   this.colour = colour;
   this.vel.mult(12);
   
   this.update = function() {
+    this.prevPos = this.pos.copy();
     this.pos.add(this.vel);
   }
   

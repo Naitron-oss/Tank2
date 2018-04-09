@@ -7,6 +7,10 @@ function randmap(){
 
 function map1(){
     var map = [];
+    map.push(new Wall(width / 2, height, width / 2, 20));
+    map.push(new Wall(width / 2, 0, width / 2, 20));
+    map.push(new Wall(0, height / 2, 20, height / 2));
+    map.push(new Wall(width, height / 2, 20, height / 2));
     for(var i = 0; i < width + 20; i += 300){
         for(var j = 0; j < height + 20; j += 300){
             if(random() < 0.4){
@@ -18,16 +22,15 @@ function map1(){
             }
         }
     }
-    map.push(new Wall(width/2, 0, width/2, 20));
-    map.push(new Wall(width/2, height, width/2, 20));
-    map.push(new Wall(0, height/2, 20, height/2));
-    map.push(new Wall(width, height/2, 20, height/2));
     return map;
 }
 
 function map2() {
-    var map = [];
-    
+    var map = [];    
+    map.push(new Wall(width / 2, height, width / 2, 20));
+    map.push(new Wall(width / 2, 0, width / 2, 20));
+    map.push(new Wall(0, height / 2, 20, height / 2));
+    map.push(new Wall(width, height / 2, 20, height / 2));
     for (var i = 0; i < width + 20; i += 250) {
         for (var j = 0; j < height + 20; j += 250) {
             if (random() < 0.1)
@@ -38,11 +41,7 @@ function map2() {
                 map.push(new Wall(i, j, 20, 90));
             else
                 map.push(new Wall(i, j, 90, 20));
+            }
         }
-    }
-    map.push(new Wall(width / 2, 0, width / 2, 20));
-    map.push(new Wall(width / 2, height, width / 2, 20));
-    map.push(new Wall(0, height / 2, 20, height / 2));
-    map.push(new Wall(width, height / 2, 20, height / 2));
     return map;
 }

@@ -75,11 +75,19 @@ function draw() {
     else
     tank2.ctr--;
     
-    for (var j = 0; j < walls.length; j++) {
-      collideBW(bullets1[i], walls[j]);    
-    }    
+   //USE IN CASE OF HIGH BULLET VELOCITY  
+   /*  for (var j = 0; j < walls.length; j++) {
+      collideBT(bullets1[i], tank1);
+      collideBT(bullets1[i], tank2);   
+      if(collideBW(bullets1[i], walls[j]))
+        j=0;    //for successive collisions
+    }     */
+    
+    //GOOD ENOUGH FOR SLOW BULLET VELOCITY
+    for (var j = 0; j < walls.length; j++)
+      collideBW(bullets1[i], walls[j]);       
     collideBT(bullets1[i], tank1);
-    collideBT(bullets1[i], tank2);   
+    collideBT(bullets1[i], tank2);
   }
   bullets1 = bullets2.slice();
   
@@ -87,18 +95,18 @@ function draw() {
   for (var i = 0; i < walls.length; i++) {
     collideTW(tank1, walls[i]);
     collideTW(tank2, walls[i]);
-    walls[i].render();
+    walls[walls.length-1-i].render();
   }
   
-  // collideTT(tank1, tank2);
-  
+  // collideTT(tank1, tank2);  
+
   tank1.update();
   tank2.update();
   
   if (gameend) {
     if(!timeout){
       timeout = true; 
-      handle = setTimeout(newGame, 4000);
+      handle = setTimeout(newGame, 2500);
     }
     bgcolor = 50;
     fill(winner == 0 ? 'GRAY' : winner == 1 ? 'GREEN' : 'RED');
@@ -106,29 +114,52 @@ function draw() {
     text((winner == 0 ? 'DRAW' : winner == 1 ? 'GREEN WINS' : 'RED WINS'), windowWidth / 2, windowHeight / 2);
   }
   else{
-    fill(0, 255, 0, 50);
+    fill(0, 255, 0, 40);
     textSize(500);
-    text(score[1], width / 4, height / 2 + 150); 
-    fill(255, 0, 0, 50);
+    text(score[1], width/4, height/2 + 150); 
+    fill(255, 0, 0, 40);
     textSize(500);
-    text(score[2], 3 * width / 4, height / 2 + 150);
+    text(score[2], 3 * width/4, height/2 + 150);
   } 
 }
 
 function collideBW(bullet, wall){
-  var delta = bullet.vel.mag()+1;
-  if(collidePointRect(bullet.pos.x, bullet.pos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b)) {
-    if(bullet.pos.x >= wall.pos.x - wall.a + delta && bullet.pos.x <= wall.pos.x + wall.a - delta){
-      bullet.vel.y *= -1;
-    }
-    if(bullet.pos.y >= wall.pos.y - wall.b + delta && bullet.pos.y <= wall.pos.y + wall.b - delta){
-      bullet.vel.x *= -1;
-    }
-  }
+  var hit = collideLineRect(bullet.pos.x, bullet.pos.y, bullet.prevPos.x, bullet.prevPos.y, wall.pos.x - wall.a, wall.pos.y - wall.b, 2*wall.a, 2*wall.b, true);
+  if(hit.top.x && hit.top.y && bullet.prevPos.y < bullet.pos.y) {
+    bullet.pos.y = bullet.pos.y += 2 * (hit.top.y - bullet.pos.y);
+    bullet.vel.y *= -1;
+    bullet.prevPos.x = hit.top.x;
+    bullet.prevPos.y = hit.top.y;
+  } else if(hit.bottom.x && hit.bottom.y && bullet.prevPos.y > bullet.pos.y) {
+    bullet.pos.y = bullet.pos.y += 2 * (hit.bottom.y - bullet.pos.y);
+    bullet.vel.y *= -1;
+    bullet.prevPos.x = hit.bottom.x;   
+    bullet.prevPos.y = hit.bottom.y;
+  } else if(hit.left.x && hit.left.y && bullet.prevPos.x < bullet.pos.x) {
+    bullet.pos.x += 2 * (hit.left.x - bullet.pos.x);
+    bullet.vel.x *= -1;
+    bullet.prevPos.x = hit.left.x;
+    bullet.prevPos.y = hit.left.y;
+  } else if(hit.right.x && hit.right.y && bullet.prevPos.x > bullet.pos.x) {
+    bullet.pos.x += 2 * (hit.right.x - bullet.pos.x);
+    bullet.vel.x *= -1;
+    bullet.prevPos.x = hit.right.x;
+    bullet.prevPos.y = hit.right.y;
+  } else if (bullet.pos.x >= wall.pos.x - wall.a && bullet.pos.x <= wall.pos.x + wall.a && bullet.pos.y >= wall.pos.y - wall.b && bullet.pos.y <= wall.pos.y + wall.b){
+    bullet.vel.mult(0);
+    return false;
+  } else
+    return false;
+  push();
+  strokeWeight(12);
+  stroke(bullet.colour);
+  point(bullet.prevPos.x, bullet.prevPos.y);
+  pop();
+  return true;
 }
 
 function collideBT(bullet, tank){
-  if(collidePointPoly(bullet.pos.x, bullet.pos.y, tank.hitbox)){
+  if(collideLinePoly(bullet.pos.x, bullet.pos.y, bullet.prevPos.x, bullet.prevPos.y, tank.hitbox)){
     if(gameend && tank.id == winner){
       winner = 0;
       clearTimeout(handle);
@@ -146,7 +177,6 @@ function collideTW(tank, wall) {
   var delta_push = 1;
   var dir = 0;
   if (collideRectPoly(wall.pos.x - wall.a, wall.pos.y - wall.b, 2 * wall.a, 2 * wall.b, tank.hitbox)) {
-    // tank.pos = tank.prevPos.copy();
     tank.heading = tank.prevHeading;
     if (tank.pos.x >= wall.pos.x - wall.a + delta && tank.pos.x <= wall.pos.x + wall.a - delta) {
       tank.thrust.y *= 0;
@@ -162,22 +192,6 @@ function collideTW(tank, wall) {
     }
   }
 }
-
-// function collideTT(tank1, tank2){
-//   if(collidePolyPoly(tank1.hitbox, tank2.hitbox)){
-//     tank1.pos = tank1.prevPos.copy();
-//     tank1.heading = tank1.prevHeading;
-//     tank1.thrust = 0;
-//     tank1.vel.mult(0);
-//     tank1.rotation = 0;
-//     tank2.pos = tank2.prevPos.copy();
-//     tank2.heading = tank2.prevHeading;
-//     tank2.thrust = 0;
-//     tank2.vel.mult(0);
-//     tank2.rotation = 0;
-//     // bgcolor = 50;
-//   }
-// }
 
 function keyReleased() {
   tank1.setRotation(0); 
