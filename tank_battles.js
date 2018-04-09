@@ -23,7 +23,7 @@ function newGame(){
   tank2 = new Tank(random(60, width - 60), random(60, height - 60), random(360), 'red', 2);
   winner = 0;
   gameend = false, timeout = false;
-  fw = 1.5; bw = 1.2; lr = 5; maxbullets = 50;
+  fw = 1.5; bw = 1.2; lr = 5; maxbullets = 5;
   bgcolor = 0;
 }
 

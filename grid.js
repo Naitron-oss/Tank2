@@ -13,7 +13,7 @@ function map1(){
                 map.push(new Wall(i, j, 20, 90));
                 map.push(new Wall(i, j, 90, 20));
             }
-            else if(random() < 0.25){
+            else if(random() < 0.4){
                 map.push(new Wall(i, j, 10, 10, -1.5, 'blue'));
             }
         }
@@ -32,7 +32,7 @@ function map2() {
         for (var j = 0; j < height + 20; j += 250) {
             if (random() < 0.1)
                 ;
-            else if (random() < 0.2)
+            else if (random() < 0.15)
                 map.push(new Wall(i, j, 10, 10, -1.5, 'blue'));
             else if (random() < 0.5)
                 map.push(new Wall(i, j, 20, 90));

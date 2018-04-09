@@ -18,8 +18,8 @@ function Tank(x, y, h, colour, id = 0) {
     this.boost();
     this.rotate();
     this.pos.add(this.vel);
-    constrain(this.pos.x, 10, width-10);
-    constrain(this.pos.x, 10, height-10);
+    this.pos.x = constrain(this.pos.x, 0, width);
+    this.pos.y = constrain(this.pos.y, 0, height);
     this.vel.mult(this.dampening);
   }
   

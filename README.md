@@ -9,11 +9,10 @@ Features:
 * Bullet Reflection on walls
 * Game Over Detection
 * Tank-Wall Collisions
-* Tank-Tank Collisions
+* Score Board
 
 To-Do:
 * Death animation
-* Score Board
 * Sound Effects
 
 
@@ -23,9 +22,9 @@ Demo@ https://aadijain.github.io/tank-trouble/
 
     P1(Green): 
         Move: Arrow Keys
-        Shoot: Space Bar
+        Shoot: Space Bar or M
 
     P2(Red): 
-        Move: WASD
-        Shoot: G
+        Move: ESDF
+        Shoot: G or Q
     
